@@ -12,6 +12,14 @@ const io = new Server(server);
 const pubClient = createClient({ url: "redis://localhost:6379" });
 const subClient = pubClient.duplicate();
 
+pubClient.on("error", (err) => {
+  console.log(err.message);
+});
+
+subClient.on("error", (err) => {
+  console.log(err.message);
+});
+
 Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
     io.adapter(createAdapter(pubClient, subClient));
     server.listen(3723, () => {
